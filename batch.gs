@@ -4,6 +4,18 @@
  * その他のファイルで使用している一部の関数はここで定義している
  */
 
+// 同一イベントが複数回送信されるのを防ぐ
+const isCachedId = (id) => {
+  const cache = CacheService.getScriptCache();
+  const isCached = cache.get(id);
+  if (isCached)
+  {
+    return true;
+  }
+  cache.put(id, true, 60 * 10); // 10min
+  return false;
+}
+
 // スプシのバックアップを作成して白ばらgoogle driveに保存する
 const createFile = () => {
   const folder = DriveApp.getFolderById(GOOGLE_DRIVE_BACKUP_FOLDER)

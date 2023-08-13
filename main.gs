@@ -30,30 +30,19 @@ function doPost(e) {
     if (type == "url_verification") {
       return ContentService.createTextOutput(JSON.stringify(contents.challenge)).setMimeType(ContentService.MimeType.TEXT);
     }
+  }
 
-    // キャッシュするとチャンネル作成やリアクションのイベントにレート制限が公式ドキュメントに記載されているよりも厳しくかかることがある。おそらく30分キャッシュしてるから。
-    // キャッシュしないとEvent APIが複数回送信されることがあるのでとりあえず必ず複数回送信されるメッセージイベントのときだけキャッシュしている。
-    if (contents.event.type === "message") {
-      const ts = contents.event.ts;
-      const cache = CacheService.getScriptCache();
-      const cacheKey = ts;
-      const cached = cache.get(cacheKey);
-      if (cached != null) {
-        return;
-      }
-      // 任意の秒数キャッシュ
-      cache.put(cacheKey, true, 900);
-    }
+  // 同一イベントが複数回送信された場合は2回目以降処理しない
+  if (isCachedId(contents.event?.client_msg_id || String(contents.event.event_ts))) {
+    return
   }
 
   // logに投稿されたメッセージは処理しない
   if (contents.event.channel === SLACK_CHANNEL_LOG) return
 
   //info_rawDataに書き込み
-  if (e.parameter.payload) {
-    sheetRawData.getRange(lastRowRawData + 1, 2).setValue(JSON.parse(e["parameter"]["payload"]))
-  }
   sheetRawData.getRange(lastRowRawData + 1, 1).setValue(JSON.stringify(contents.event))
+  sheetRawData.appendRow([JSON.stringify(contents.event)])
 
   // 新規チャンネル作成イベント
   if (contents.event.type === "channel_created") {
