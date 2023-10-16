@@ -4,6 +4,11 @@
  * その他のファイルで使用している一部の関数はここで定義している
  */
 
+const notifyError = () => {
+  const message = "An error occurred."
+  sheetErrors.appendRow([timestampToTime(parseInt(String(Date.now()).slice(0, 10))), message])
+}
+
 // 同一イベントが複数回送信されるのを防ぐ
 const isCachedId = (id) => {
   const cache = CacheService.getScriptCache();

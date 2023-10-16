@@ -176,7 +176,7 @@ function doPost(e) {
       handleMessage(contents)
     }
     catch (error) {
-      const message = `<@${SLACK_ADMIN_ID}>\nGAS:\n\nメッセージ送信イベントの処理中にエラーが発生しました。\n\nエラー>${error}\n\nイベント>${JSON.stringify(contents.event)}`
+      const message = `<@${SLACK_ADMIN_ID}>\nGAS:\n\nメッセージ送信イベントの処理中にエラーが発生しました。\n\nエラー>${error.message}\n\nイベント>${JSON.stringify(contents.event)}`
       sheetErrors.appendRow([timestampToTime(parseInt(String(Date.now()).slice(0, 10))), message])
     }
     return

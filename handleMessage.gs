@@ -29,7 +29,7 @@ const handleMessage = (contents) => {
   // ファイルのURLを取得しファイルシートに記録
   let filesOutput = []
   if (contents.event.files) {
-    const files = contents.event.files
+    const files = contents.event?.files || {}
     files.forEach((file) => {
       const fileInfo = [targetId, file.name, file.url_private, targetUser, targetChannel, targetTS]
       filesOutput.push(fileInfo)
@@ -173,20 +173,19 @@ const handleMessage = (contents) => {
   // メッセージが送られたチャンネル名のシートに書き込み
   targetSheet.appendRow(eventDetails)
   
-
   // S3にアップロード
-  const up = async () => {
-    if (filesOutput.length) {
-      await contents.event.files.forEach((file, i) => {
-      uploadToS3(file.url_private, targetId, i)
-      })
-    }
+  const up = () => {
     if (isMessageChanged) {
-    firestore.updateDocument(`messages/channels/${targetChannel}/${changedMessage.id}`, changedMessage, isMessageChanged);
+      firestore.updateDocument(`messages/channels/${targetChannel}/${changedMessage.id}`, changedMessage, isMessageChanged);
     } else if (isMessageDeleted) {
-    firestore.updateDocument(`messages/channels/${targetChannel}/${deletedMessage.id}`, deletedMessage, isMessageDeleted);
+      firestore.updateDocument(`messages/channels/${targetChannel}/${deletedMessage.id}`, deletedMessage, isMessageDeleted);
     } else {
       firestore.updateDocument(`messages/channels/${targetChannel}/${message.id}`, message);
+    }
+    if (filesOutput.length) {
+      contents.event.files.forEach((file, i) => {
+        uploadToS3(file.url_private, targetId, i)
+      })
     }
   }
 

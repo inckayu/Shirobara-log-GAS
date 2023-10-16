@@ -2,15 +2,20 @@
 // もっとスマートに書けるかも...
 const hasFileExist = (contents) => {
   if (contents.event.subtype === "bot_message") return 0
-  if(contents.event.files) {
+  if (contents.event.subtype === "thread_broadcast") {
+    if ("files" in contents.event) {
+      return 1
+    } else return 0
+  }
+  if("files" in contents.event) {
     return 1
-  } else if (contents.event.subtype) {
+  } else if ("subtype" in contents.event) {
     if(contents.event.subtype === "message_changed") {
-      if (contents.event.message.files) {
+      if ("files" in contents.event.message) {
         return 1
       } else return 0
     } else {
-      if (contents.event.previous_message.files) {
+      if ("files" in contents.event.previous_message) {
         return 1
       } else return 0
     }
