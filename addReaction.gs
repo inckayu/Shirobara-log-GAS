@@ -27,7 +27,7 @@ const addReaction = (inputReaction) => {
         doc.forEach((item, index) => {
           messages += `*${index}* : ${item.fields.text.stringValue}\n`
         })
-        const message = `リアクション対象メッセージのタイムスタンプと近いメッセージが${doc.length}件ヒットしました。firestoreには1つめのメッセージにリアクションを反映します。\n\n>>>${messages}`
+        const message = `リアクション対象メッセージのタイムスタンプと近いメッセージが${doc.length}件ヒットしました。firestoreには1つめのメッセージにリアクションを反映します。\n\n>>>${messages.slice(0, 50)}...`
         postMessage(SLACK_CHANNEL_LOG, message)
       }
 

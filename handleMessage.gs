@@ -53,7 +53,7 @@ const handleMessage = (contents) => {
           doc.forEach((item, index) => {
             messages += `*${index}* : ${item.fields.text.stringValue}\n`
           })
-          const message = `返信元メッセージのタイムスタンプと近いメッセージが${doc.length}件ヒットしました。firestoreには1つめのメッセージを返信元メッセージとして処理します。\n\n>>>${messages}`
+          const message = `返信元メッセージのタイムスタンプと近いメッセージが${doc.length}件ヒットしました。firestoreには1つめのメッセージを返信元メッセージとして処理します。\n\n>>>${messages.slice(0, 50)}...`
           postMessage(SLACK_CHANNEL_LOG, message)
         }
 
@@ -120,7 +120,7 @@ const handleMessage = (contents) => {
           doc.forEach((item, index) => {
             messages += `*${index}* : ${item.fields.text.stringValue}\n`
           })
-          const message = `編集されたメッセージのタイムスタンプと近いメッセージが${doc.length}件ヒットしました。firestoreには1つめのメッセージを編集されたメッセージとして処理します。\n\n>>>${messages}`
+          const message = `編集されたメッセージのタイムスタンプと近いメッセージが${doc.length}件ヒットしました。firestoreには1つめのメッセージを編集されたメッセージとして処理します。\n\n>>>${messages.slice(0, 50)}...`
           postMessage(SLACK_CHANNEL_LOG, message)
         }
 

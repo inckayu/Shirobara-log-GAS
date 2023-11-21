@@ -54,6 +54,10 @@ const S3_SECRET_ACCESS_KEY = scriptProperties.getProperty('S3_SECRET_ACCESS_KEY'
 const S3_BUCKET_NAME = scriptProperties.getProperty('S3_BUCKET_NAME')
 const S3_BUCKET_URL = scriptProperties.getProperty('S3_BUCKET_URL')
 
+// 白ばらログ
+const SHIROBARA_LOG_URL = scriptProperties.getProperty('SHIROBARA_LOG_URL')
+const SHIROBARA_LOG_PASSWORD = scriptProperties.getProperty('SHIROBARA_LOG_PASSWORD')
+
 
 // firestore
 const firestoreDate = () => {
