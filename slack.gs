@@ -5,7 +5,7 @@ const getSlackUser = () => {
     "method" : "get",
     "contentType": "application/x-www-form-urlencoded",
     "payload" : { 
-      "token": SLACK_TOKEN
+      "token": SLACK_TOKEN,
     }
   };
   
@@ -24,12 +24,6 @@ const getSlackUser = () => {
       let real_name = member.profile.display_name ? member.profile.display_name : member.real_name; //表示名が設定されていない場合は氏名を表示
       arr.push([real_name,id]);
     }
-  }
-  
-  //スプレッドシートに書き込み
-  sheetUsers.clear().appendRow(['ユーザ名', 'ユーザID'])
-  for (let i=0; i<arr.length; i++) {
-    sheetUsers.appendRow(arr[i])
   }
 }
 

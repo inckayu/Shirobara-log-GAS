@@ -10,6 +10,9 @@ const addNewUser = (contents) => {
     }
   }
 
+  const message = `白ばらのSlackワークスペースへようこそ！\n<https://docs.google.com/document/d/${GOOGLE_DOCUMENT_SLACK}|Slackの使い方をまとめたドキュメント>があるのでぜひ読んで確認しておいてください。\n90日以前のメッセージを見たい場合は、<${SHIROBARA_LOG_URL}|白ばらSlackログ>から見ることができます。パスワードは \`${SHIROBARA_LOG_PASSWORD}\` です。`
+  postDM(user, message)
+
   for (let i=1; i<5; i++) {
     try {
       firestore.updateDocument(`info/users`, content, true);

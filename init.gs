@@ -5,6 +5,7 @@ const scriptProperties = PropertiesService.getScriptProperties()
 const GOOGLE_DRIVE_BACKUP_FOLDER = scriptProperties.getProperty('GOOGLE_DRIVE_BACKUP_FOLDER')
 const SPREADSHEET_LOG = scriptProperties.getProperty('SPREADSHEET_LOG')
 const GOOGLE_DOCUMENT_MANUAL = scriptProperties.getProperty('GOOGLE_DOCUMENT_MANUAL')
+const GOOGLE_DOCUMENT_SLACK = scriptProperties.getProperty('GOOGLE_DOCUMENT_SLACK')
 const GOOGLE_FORM_NEW_CHANNEL = scriptProperties.getProperty('GOOGLE_FORM_NEW_CHANNEL')
 
 // Slack

@@ -65,6 +65,7 @@ function doPost(e) {
     const newChannelSheet = ss.insertSheet()
     newChannelSheet.setName('channel_' + channel.name)
     newChannelSheet.appendRow(logHeader)
+    console.log(JSON.stringify(channel))
     try {
       const content = {
         [channel.id]: {
