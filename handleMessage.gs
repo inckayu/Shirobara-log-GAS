@@ -16,15 +16,39 @@ const handleMessage = (contents) => {
 
   if (targetChannel.slice(0, 1) === "D" || blackUserList.includes(targetUser)) return
   if (contents.event.subtype === "channel_join") return
-
   searchChannel(targetChannel)
   userName = searchUser(targetUser)
   setSlackChannelInfoInSheet()
   channelName = searchChannel(targetChannel)
 
   // 書き込むシートとその最終行を取得
-  const targetSheet = ss.getSheetByName('channel_' + channelName)
-  const lastRowTargetSheet = targetSheet.getLastRow()
+  try {
+    var targetSheet = ss.getSheetByName('channel_' + channelName)
+    var lastRowTargetSheet = targetSheet.getLastRow()
+  } catch {
+    const message = `メッセージが投稿されたチャンネルがスプレッドシートに存在しませんでした。新しく作成します。`
+    postMessage(SLACK_CHANNEL_LOG, message)
+
+    const logHeader = [
+      "テキスト",
+      "投稿者",
+      "投稿日時",
+      "チャンネル",
+      "返信先メッセージ",
+      "タイムスタンプ",
+      "編集元メッセージ",
+      "投稿者ID",
+      "メンション先ID",
+      "添付ファイル有無",
+      "ID",
+    ]
+    const channel = contents.event.channel
+    const newChannelSheet = ss.insertSheet()
+    newChannelSheet.setName('channel_' + channel.name)
+    newChannelSheet.appendRow(logHeader)
+    var targetSheet = ss.getSheetByName('channel_' + channel.name)
+    var lastRowTargetSheet = targetSheet.getLastRow()
+  }
 
   // ファイルのURLを取得しファイルシートに記録
   let filesOutput = []
@@ -153,7 +177,7 @@ const handleMessage = (contents) => {
     emojis: emojiExtractor(targetText),
     attachments: attachments.length ? {ts: parseFloat(attachments[0])*1000000, channel: attachments[1]} : null,
   }
-
+  
   // メッセージが編集された場合
   const changedMessage = {
     id: editedMessageId,

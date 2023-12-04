@@ -1,17 +1,17 @@
 // 新規ユーザがワークスペースに入った場合にfirestoreに反映
 const addNewUser = (contents) => {
+  const id = contents.event.user.id
   const user = contents.event.user
   const profile = user.profile
+  const message = `白ばらのSlackワークスペースへようこそ！\n<https://docs.google.com/document/d/${GOOGLE_DOCUMENT_SLACK}|Slackの使い方をまとめたドキュメント>があるのでぜひ読んで確認しておいてください。\n90日以前のメッセージを見たい場合は、<${SHIROBARA_LOG_URL}|白ばらSlackログ>から見ることができます。パスワードは \`${SHIROBARA_LOG_PASSWORD}\` です。`
+  postDM(id, message)
   const content = {
-    [user.id]: {
-      id: user.id,
+    [id]: {
+      id,
       name: profile.display_name || profile.real_name, // display_nameが存在しないorから文字列の場合はreal_nameを使用
       icon: profile.image_512,
     }
   }
-
-  const message = `白ばらのSlackワークスペースへようこそ！\n<https://docs.google.com/document/d/${GOOGLE_DOCUMENT_SLACK}|Slackの使い方をまとめたドキュメント>があるのでぜひ読んで確認しておいてください。\n90日以前のメッセージを見たい場合は、<${SHIROBARA_LOG_URL}|白ばらSlackログ>から見ることができます。パスワードは \`${SHIROBARA_LOG_PASSWORD}\` です。`
-  postDM(user, message)
 
   for (let i=1; i<5; i++) {
     try {
