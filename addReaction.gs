@@ -36,7 +36,7 @@ const addReaction = (inputReaction) => {
       
     } catch (e) {
       const message = `リアクションイベントの反映に失敗しました。${i === 4 ? "" : String(i) + "度目の再試行を行います。"}\n\n>>>エラーメッセージ: ${e.message}\nリアクションされたメッセージのタイムスタンプ: ${timestamp(parseInt(targetMessage) / 1000)}\nチャンネル: ${channelName}\nユーザ: ${userName}\nリアクション: :${reaction}:`
-      sheetErrors.appendRow([timestampToTime(parseInt(String(Date.now()).slice(0, 10))), message])
+      // sheetErrors.appendRow([timestampToTime(parseInt(String(Date.now()).slice(0, 10))), message])
     }
   }
 
@@ -56,7 +56,7 @@ const addReaction = (inputReaction) => {
       break
     } catch (e) {
       const message = `リアクションされたメッセージ情報の取得に失敗しました。${i === 4 ? "" : String(i) + "度目の再試行を行います。"}\n>>>エラーメッセージ: ${e.message}`
-      sheetErrors.appendRow([timestampToTime(parseInt(String(Date.now()).slice(0, 10))), message])
+      // sheetErrors.appendRow([timestampToTime(parseInt(String(Date.now()).slice(0, 10))), message])
     }
   }
 

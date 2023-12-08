@@ -21,6 +21,12 @@ const isCachedId = (id) => {
   return false;
 }
 
+const deleteTest = () => {
+  const sheet = ss.getSheetByName("channel_選曲2024");
+  sheet.deleteColumns(12, 15)
+  sheet.deleteRows(51, 950)
+}
+
 // スプシのバックアップを作成して白ばらgoogle driveに保存する
 const createFile = () => {
   const folder = DriveApp.getFolderById(GOOGLE_DRIVE_BACKUP_FOLDER)
@@ -34,11 +40,11 @@ const createFile = () => {
     file.setName(`slackログ_${date.getFullYear()}${date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1).toString() : date.getMonth() + 1}${date.getDate() < 10 ? "0" + date.getDate().toString() : date.getDate()}${date.getHours() < 10 ? "0" + date.getHours().toString() : date.getHours()}${date.getMinutes() < 10 ? "0" + date.getMinutes().toString() : date.getMinutes()}`)
   } catch (error) {
     const message = `slackログのバックアップの保存に失敗しました。\n\nエラーメッセージ: ${error.message}`
-    postMessage(SLACK_CHANNEL_DEV, message)
+    postMessage(SLACK_CHANNEL_LOG, message)
     return
   }
   const message = `<https://drive.google.com/drive/u/0/folders/${GOOGLE_DRIVE_BACKUP_FOLDER}|slackログのバックアップ>を保存しました。`
-  postMessage(SLACK_CHANNEL_DEV, message)
+  postMessage(SLACK_CHANNEL_LOG, message)
   return
 }
 

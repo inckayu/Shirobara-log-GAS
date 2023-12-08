@@ -41,8 +41,12 @@ function doPost(e) {
   if (contents.event.channel === SLACK_CHANNEL_LOG) return
 
   //info_rawDataに書き込み
-  sheetRawData.getRange(lastRowRawData + 1, 1).setValue(JSON.stringify(contents.event))
-  sheetRawData.appendRow([JSON.stringify(contents.event)])
+  try {
+    sheetRawData.getRange(lastRowRawData + 1, 1).setValue(JSON.stringify(contents.event))
+    sheetRawData.appendRow([JSON.stringify(contents.event)])
+  } catch (error) {
+    postMessage(SLACK_CHANNEL_LOG, error.message)
+  }
 
   // 新規チャンネル作成イベント
   if (contents.event.type === "channel_created") {
@@ -65,6 +69,11 @@ function doPost(e) {
     const newChannelSheet = ss.insertSheet()
     newChannelSheet.setName('channel_' + channel.name)
     newChannelSheet.appendRow(logHeader)
+    const newSheet = ss.getSheetByName('channel_' + channel.name)
+    // 不必要なセルを削除
+    newSheet.deleteColumns(12, 15)
+    newSheet.deleteRows(51, 950)
+
     console.log(JSON.stringify(channel))
     try {
       const content = {
@@ -135,11 +144,11 @@ function doPost(e) {
     */
     if (channel === SLACK_CHANNEL_FREETALK && contents.event.type === "reaction_added" && (dayOfWeek === 3 || dayOfWeek === 6) && hour >= 12 && random > 0.25) {
       const message = `urlfetchの回数制限を避けるため、今回のfreetalkのリアクションイベントは処理されませんでした。(25%)\n\n>>>ユーザ: ${user}\nリアクション: :${reaction}:`
-      sheetErrors.appendRow([timestampToTime(parseInt(String(Date.now()).slice(0, 10))), message])
+      // sheetErrors.appendRow([timestampToTime(parseInt(String(Date.now()).slice(0, 10))), message])
       return
     } else if (channel === SLACK_CHANNEL_FREETALK && contents.event.type === "reaction_added" && hour >= 12 && random > 0.5) {
       const message = `urlfetchの回数制限を避けるため、今回のfreetalkのリアクションイベントは処理されませんでした。(50%)\n\n>>>ユーザ: ${user}\nリアクション: :${reaction}:`
-      sheetErrors.appendRow([timestampToTime(parseInt(String(Date.now()).slice(0, 10))), message])
+      // sheetErrors.appendRow([timestampToTime(parseInt(String(Date.now()).slice(0, 10))), message])
       return
     }
 

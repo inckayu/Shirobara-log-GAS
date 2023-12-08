@@ -48,6 +48,10 @@ const handleMessage = (contents) => {
     newChannelSheet.appendRow(logHeader)
     var targetSheet = ss.getSheetByName('channel_' + channel.name)
     var lastRowTargetSheet = targetSheet.getLastRow()
+
+    // 不必要なセルを削除
+    targetSheet.deleteColumns(12, 15)
+    targetSheet.deleteRows(51, 950)
   }
 
   // ファイルのURLを取得しファイルシートに記録
