@@ -42,11 +42,10 @@ const handleMessage = (contents) => {
       "添付ファイル有無",
       "ID",
     ]
-    const channel = contents.event.channel
     const newChannelSheet = ss.insertSheet()
-    newChannelSheet.setName('channel_' + channel.name)
+    newChannelSheet.setName('channel_' + channelName)
     newChannelSheet.appendRow(logHeader)
-    var targetSheet = ss.getSheetByName('channel_' + channel.name)
+    var targetSheet = ss.getSheetByName('channel_' + channelName)
     var lastRowTargetSheet = targetSheet.getLastRow()
 
     // 不必要なセルを削除
@@ -79,9 +78,9 @@ const handleMessage = (contents) => {
         if (doc.length > 1) {
           let messages = ""
           doc.forEach((item, index) => {
-            messages += `*${index}* : ${item.fields.text.stringValue}\n`
+            messages += `*${index}* : ${item.fields.text.stringValue.slice(0, 50)}...\n`
           })
-          const message = `返信元メッセージのタイムスタンプと近いメッセージが${doc.length}件ヒットしました。firestoreには1つめのメッセージを返信元メッセージとして処理します。\n\n>>>${messages.slice(0, 50)}...`
+          const message = `返信元メッセージのタイムスタンプと近いメッセージが${doc.length}件ヒットしました。firestoreには1つめのメッセージを返信元メッセージとして処理します。\n\n>>>${messages}`
           postMessage(SLACK_CHANNEL_LOG, message)
         }
 
@@ -146,9 +145,9 @@ const handleMessage = (contents) => {
         if (doc.length > 1) {
           let messages = ""
           doc.forEach((item, index) => {
-            messages += `*${index}* : ${item.fields.text.stringValue}\n`
+            messages += `*${index}* : ${item.fields.text.stringValue.slice(0, 50)}...\n`
           })
-          const message = `編集されたメッセージのタイムスタンプと近いメッセージが${doc.length}件ヒットしました。firestoreには1つめのメッセージを編集されたメッセージとして処理します。\n\n>>>${messages.slice(0, 50)}...`
+          const message = `編集されたメッセージのタイムスタンプと近いメッセージが${doc.length}件ヒットしました。firestoreには1つめのメッセージを編集されたメッセージとして処理します。\n\n>>>${messages}`
           postMessage(SLACK_CHANNEL_LOG, message)
         }
 

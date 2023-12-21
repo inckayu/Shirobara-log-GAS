@@ -42,7 +42,6 @@ function doPost(e) {
 
   //info_rawDataに書き込み
   try {
-    sheetRawData.getRange(lastRowRawData + 1, 1).setValue(JSON.stringify(contents.event))
     sheetRawData.appendRow([JSON.stringify(contents.event)])
   } catch (error) {
     postMessage(SLACK_CHANNEL_LOG, error.message)

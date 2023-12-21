@@ -406,5 +406,6 @@ const generateRandomMessageId = () => {
   const thirdRandomId = getAutoId(4)
   const forthRandomId = getAutoId(4)
   const finalRandomId = getAutoId(12)
+  console.log(`${firstRandomId}-${secondRandomId}-${thirdRandomId}-${forthRandomId}-${finalRandomId}`)
   return `${firstRandomId}-${secondRandomId}-${thirdRandomId}-${forthRandomId}-${finalRandomId}`
 }
