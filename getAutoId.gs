@@ -7,12 +7,3 @@ const getAutoId = (digit) => {
   }
   return autoId
 }
-
-const a = () => {
-  const firstRandomId = getAutoId(8)
-  const secondRandomId = getAutoId(4)
-  const thirdRandomId = getAutoId(4)
-  const forthRandomId = getAutoId(4)
-  const finalRandomId = getAutoId(12)
-  console.log(`${firstRandomId}-${secondRandomId}-${thirdRandomId}-${forthRandomId}-${finalRandomId}`)
-}

@@ -1,6 +1,7 @@
 const handleMessage = (contents) => {
+  const event = contents.event
   const targetUser = extractUser(contents)
-  const targetChannel = contents.event.channel || contents.event.item.channel
+  const targetChannel = event.channel || event.item.channel
   const targetTS = extractTS(contents)
   const targetText = getText(contents)
   const previousMessage = getPreviousMessage(contents)
@@ -15,7 +16,7 @@ const handleMessage = (contents) => {
   ]
 
   if (targetChannel.slice(0, 1) === "D" || blackUserList.includes(targetUser)) return
-  if (contents.event.subtype === "channel_join") return
+  if (event.subtype === "channel_join") return
   searchChannel(targetChannel)
   userName = searchUser(targetUser)
   setSlackChannelInfoInSheet()
@@ -55,8 +56,8 @@ const handleMessage = (contents) => {
 
   // ファイルのURLを取得しファイルシートに記録
   let filesOutput = []
-  if (contents.event.files) {
-    const files = contents.event?.files || {}
+  if (event.files) {
+    const files = event?.files || {}
     files.forEach((file) => {
       const fileInfo = [targetId, file.name, file.url_private, targetUser, targetChannel, targetTS]
       filesOutput.push(fileInfo)
@@ -65,14 +66,14 @@ const handleMessage = (contents) => {
   }
 
   // thread_tsはリプライの宛先のメッセージのts
-  if (contents.event.thread_ts || previousMessage.thread_ts) {
+  if (event.thread_ts || previousMessage.thread_ts) {
     // メッセージがリプライであった場合、セルの色をオレンジにする
     targetSheet.getRange(lastRowTargetSheet + 1, 1, 1, 7).setBackground("#ffbf87")
 
     for (let i=1; i<5; i++) {
       try {
         // addReactionの処理とほぼ同じ
-        const tempTS = parseFloat(contents.event.thread_ts || previousMessage.thread_ts)*1000000
+        const tempTS = parseFloat(event.thread_ts || previousMessage.thread_ts)*1000000
         const doc = firestore.query(`messages/channels/${targetChannel}`).Where("postAt", ">=", parseInt(tempTS)-10).Where("postAt", "<=", parseInt(tempTS)+10).Execute()
 
         if (doc.length > 1) {
@@ -95,11 +96,11 @@ const handleMessage = (contents) => {
   }
 
   let attachments = []
-  if (contents.event.attachments) {
-    const atc = contents.event.attachments[0]
+  if (event.attachments) {
+    const atc = event.attachments[0]
     attachments = [atc.ts, atc.channel_id, atc.text]
-  } else if (contents.event.previous_message?.attachments) {
-    const atc = contents.event.previous_message.attachments[0]
+  } else if (event.previous_message?.attachments) {
+    const atc = event.previous_message.attachments[0]
     attachments = [atc.ts, atc.channel_id, atc.text]
   }
 
@@ -118,7 +119,7 @@ const handleMessage = (contents) => {
     attachments.length ? attachments : ""
   ]
 
-  const messageType = contents.event.subtype || ""
+  const messageType = event.subtype || ""
   const isMessageChanged = messageType === "message_changed" // メッセージ編集
   const isMessageDeleted = messageType === "message_deleted" // メッセージ削除
 
@@ -135,11 +136,11 @@ const handleMessage = (contents) => {
 
   let editedMessageId
   let deletedMessageId
-  if ((isMessageChanged || isMessageDeleted) && (contents.event.message?.attachments || contents.event.previous_message?.attachments)) {
+  if ((isMessageChanged || isMessageDeleted) && (event.message?.attachments || event.previous_message?.attachments)) {
     for (let i=1; i<5; i++) {
       try {
         // addReactionの処理とほぼ同じ
-        const tempTS = parseFloat(contents.event.previous_message.ts)*1000000
+        const tempTS = parseFloat(event.previous_message.ts)*1000000
         const doc = firestore.query(`messages/channels/${targetChannel}`).Where("postAt", ">=", parseInt(tempTS)-10).Where("postAt", "<=", parseInt(tempTS)+10).Execute()
 
         if (doc.length > 1) {
@@ -160,8 +161,8 @@ const handleMessage = (contents) => {
       }
     }
   } else {
-    editedMessageId = isMessageChanged ? contents.event.message.client_msg_id : targetId
-    deletedMessageId = isMessageDeleted ? contents.event.previous_message.client_msg_id : targetId
+    editedMessageId = isMessageChanged ? event.message.client_msg_id : targetId
+    deletedMessageId = isMessageDeleted ? event.previous_message.client_msg_id : targetId
   }
 
   // メッセージが投稿された場合
@@ -173,7 +174,7 @@ const handleMessage = (contents) => {
     deletedAt: null,
     user: targetUser,
     channel: targetChannel,
-    repliedMessageTS: parseFloat(contents.event.thread_ts)*1000000 ? parseFloat(contents.event.thread_ts)*1000000 : null,
+    repliedMessageTS: parseFloat(event.thread_ts)*1000000 ? parseFloat(event.thread_ts)*1000000 : null,
     previousMessage: null,
     mentions: mentionDetecter(targetText),
     files: filesOutput ? fileObject : null,
@@ -210,7 +211,7 @@ const handleMessage = (contents) => {
       firestore.updateDocument(`messages/channels/${targetChannel}/${message.id}`, message);
     }
     if (filesOutput.length) {
-      contents.event.files.forEach((file, i) => {
+      event.files.forEach((file, i) => {
         uploadToS3(file.url_private, targetId, i)
       })
     }

@@ -1,9 +1,8 @@
 // メッセージにリアクションが付与されたときにfirestoreに反映
 const addReaction = (inputReaction) => {
-  // リアクションが押されたメッセージのタイムスタンプからメッセージIDを取得
-  const targetMessage = inputReaction.targetMessageTS
+  const targetMessage = inputReaction.targetMessageTS // リアクションされたメッセージを取得するためにリアクションが押されたメッセージのタイムスタンプをキーとする
   const channel = inputReaction.channel
-  const channelName = searchChannel(inputReaction.channel)
+  const channelName = searchChannel(channel)
   const user = inputReaction.user
   const userName = searchUser(user)
   const reaction = inputReaction.reaction
@@ -19,7 +18,7 @@ const addReaction = (inputReaction) => {
   for (let i=1; i<5; i++) {
     try {
       // firestoreからpostAtがtargetMessage(タイムスタンプ)と一致するメッセージのIDを取得
-      // タイムスタンプを1000倍しているため四捨五入かなにかの影響でタイムスタンプが完全に一致せずメッセージを取得できない場合がある(けっこうな割合で取得できない)ので一定の範囲内で該当するものを取得
+      // タイムスタンプを1000倍しているため四捨五入かなにかの影響でタイムスタンプが完全に一致せずメッセージを取得できない場合が頻繁にあるので一定の範囲内で該当するものを取得
       const doc = firestore.query(`messages/channels/${channel}`).Where("postAt", ">=", parseInt(targetMessage)-10).Where("postAt", "<=", parseInt(targetMessage)+10).Execute()
       
       if (doc.length > 1) {
@@ -62,11 +61,12 @@ const addReaction = (inputReaction) => {
 
   try {
     // 既存のreactionsを取得
-    const reactions = Object.values(document.fields.reactions.mapValue.fields)
-    const reactionsKey = Object.keys(document.fields.reactions.mapValue.fields)
+    const reactionsFields = document.fields.reactions.mapValue.fields
+    const reactions = Object.values(reactionsFields)
+    const reactionsKey = Object.keys(reactionsFields)
     let reactionsObj = {}
     reactions.forEach((reaction, index) => {
-      const fields = reaction.mapValue.fields
+      const reactionFields = reaction.mapValue.fields
       if (
         /**
         既存のreactionsからinputReactionのreactionとuserが一致し、かつ削除されていないもの以外
@@ -74,14 +74,14 @@ const addReaction = (inputReaction) => {
         つまり既存のreactionsをすべてreactionsObjに追加する
         */
 
-        (inputReaction.reaction !== fields.reaction.stringValue ||
-        inputReaction.user !== fields.user.stringValue) &&
+        (inputReaction.reaction !== reactionFields.reaction.stringValue ||
+        inputReaction.user !== reactionFields.user.stringValue) &&
         inputReaction.deletedAt === null
         ) {
           const content = {
-            reaction: fields.reaction.stringValue,
-            user: fields.user.stringValue,
-            postAt: parseInt(fields.postAt.integerValue),
+            reaction: reactionFields.reaction.stringValue,
+            user: reactionFields.user.stringValue,
+            postAt: parseInt(reactionFields.postAt.integerValue),
             deletedAt: null,
           }
           reactionsObj[`${reactionsKey[index]}`] = content
