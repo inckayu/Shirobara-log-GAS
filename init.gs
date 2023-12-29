@@ -10,6 +10,7 @@ const GOOGLE_FORM_NEW_CHANNEL = scriptProperties.getProperty('GOOGLE_FORM_NEW_CH
 
 // Slack
 const SLACK_TOKEN = scriptProperties.getProperty('SLACK_TOKEN')
+const SLACK_TOKEN_MOLMOT = scriptProperties.getProperty('SLACK_TOKEN_MOLMOT') // スペルが異なるのは気にしない
 const SLACK_CHANNEL_LOG = scriptProperties.getProperty('SLACK_CHANNEL_LOG')
 const SLACK_CHANNEL_DEV = scriptProperties.getProperty('SLACK_CHANNEL_DEV')
 const SLACK_CHANNEL_FREETALK = scriptProperties.getProperty('SLACK_CHANNEL_FREETALK')

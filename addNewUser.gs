@@ -3,8 +3,8 @@ const addNewUser = (contents) => {
   const id = contents.event.user.id
   const user = contents.event.user
   const profile = user.profile
-  const message = `白ばらのSlackワークスペースへようこそ！\n<https://docs.google.com/document/d/${GOOGLE_DOCUMENT_SLACK}|Slackの使い方をまとめたドキュメント>があるのでぜひ読んで確認しておいてください。\n90日以前のメッセージを見たい場合は、<${SHIROBARA_LOG_URL}|白ばらSlackログ>から見ることができます。パスワードは \`${SHIROBARA_LOG_PASSWORD}\` です。`
-  postDM(id, message)
+  const message = `白ばらのSlackワークスペースへようこそモル:bangbang:\n<https://docs.google.com/document/d/${GOOGLE_DOCUMENT_SLACK}|Slackの使い方をまとめたドキュメント>があるモルから、ぜひ読んで確認してほしいモル:star-struck:\n90日以前のメッセージを見たい場合は、<${SHIROBARA_LOG_URL}|白ばらSlackログ>から見れるモル:bangbang:。パスワードは \`${SHIROBARA_LOG_PASSWORD}\` モルよ:bangbang:\n\nちなみに僕はバーチャルアイドルモルモットっていうアイドルモル:star-struck:好きなチャンネルで僕のことをメンションして質問してくれたらなんでも答えてあげるモルよ:bangbang:質問には画像を添付することもできるモル。\n質問の頭に[draw]をつけると、絵を描くことができるモル:star-struck:`
+  postDMAsMolmot(id, message)
   const content = {
     [id]: {
       id,

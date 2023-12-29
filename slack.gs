@@ -112,11 +112,7 @@ const getChannelID = (userId) => {
 
 //botからDMを送る
 const postDM = (userId, message) => {
-  
-  //【処理1】DMを開き、チャンネルIDを取得する
   const channelId = getChannelID(userId)
-  
-  //【処理2】指定の[チャンネルID]にDMを送信する
   const message_options = {
     "method" : "post",
     "contentType": "application/x-www-form-urlencoded",
@@ -129,4 +125,25 @@ const postDM = (userId, message) => {
   
   const message_url = 'https://slack.com/api/chat.postMessage'
   UrlFetchApp.fetch(message_url, message_options)
+}
+
+//botからDMを送る
+const postDMAsMolmot = (userId, message) => {
+  // const channelId = getChannelID(userId)
+  const message_options = {
+    "method" : "post",
+    "contentType": "application/x-www-form-urlencoded",
+    "payload" : {
+      "token": SLACK_TOKEN_MOLMOT,
+      "channel": userId, // loggerのトークンを使う場合channelIdでDMを送るが、バチャモルのトークンだとuserIdを入力しないとchannel_not_foundエラーになるのはなぜ??
+      "text": message,
+    }
+  };
+  
+  const message_url = 'https://slack.com/api/chat.postMessage'
+  try {
+    UrlFetchApp.fetch(message_url, message_options)
+  } catch (e) {
+    postMessage(SLACK_CHANNEL_LOG, `${e.message}`)
+  }
 }
