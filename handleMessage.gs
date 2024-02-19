@@ -68,7 +68,7 @@ const handleMessage = (contents) => {
   // thread_tsはリプライの宛先のメッセージのts
   if (event.thread_ts || previousMessage.thread_ts) {
     // メッセージがリプライであった場合、セルの色をオレンジにする
-    targetSheet.getRange(lastRowTargetSheet + 1, 1, 1, 7).setBackground("#ffbf87")
+    targetSheet.getRange(lastRowTargetSheet + 1, 1, 1, 11).setBackground("#ffbf87")
 
     for (let i=1; i<5; i++) {
       try {

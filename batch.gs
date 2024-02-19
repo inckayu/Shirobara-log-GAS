@@ -22,9 +22,27 @@ const isCachedId = (id) => {
 }
 
 const deleteTest = () => {
-  const sheet = ss.getSheetByName("channel_選曲2024");
-  sheet.deleteColumns(12, 15)
-  sheet.deleteRows(51, 950)
+  const sheet = ss.getSheetByName("channel_test");
+  const lastRow = sheet.getLastRow()
+  console.log(lastRow)
+  sheet.insertRowAfter(lastRow)
+  sheet.deleteRows(2, lastRow - 1)
+  // const s = "info_channels"
+  // const regrex = new RegExp('^channel_.+')
+  // console.log(regrex.test(s))
+}
+
+const t = () => {
+  const regrex_channel = new RegExp('^channel_.+')
+  const regrex_log = new RegExp('^log_.+')
+  allSheets.forEach((sheet) => {
+    const sheetName = sheet.getName()
+    if (!regrex_channel.test(sheetName) && !regrex_log.test(sheetName) && !(sheetName === "info_rawData")) return
+    const lastRow = sheet.getLastRow()
+    // sheet.deleteRows(2, lastRow)
+    sheet.getRange(1, 1, 10, 11).setBackground("#ffffff")
+    console.log(`deleted: ${sheetName}`)
+  })
 }
 
 // スプシのバックアップを作成して白ばらgoogle driveに保存する
@@ -33,11 +51,28 @@ const createFile = () => {
   const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_LOG}/export?format=xlsx`
 
   try {
+    // エクセルを作成
     const response = UrlFetchApp.fetch(url);
     const blob = response.getBlob();
     const file = folder.createFile(blob);
     const date = new Date()
     file.setName(`slackログ_${date.getFullYear()}${date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1).toString() : date.getMonth() + 1}${date.getDate() < 10 ? "0" + date.getDate().toString() : date.getDate()}${date.getHours() < 10 ? "0" + date.getHours().toString() : date.getHours()}${date.getMinutes() < 10 ? "0" + date.getMinutes().toString() : date.getMinutes()}`)
+
+    // スプシのデータを削除
+    const regrex_channel = new RegExp('^channel_.+')
+    const regrex_log = new RegExp('^log_.+')
+    allSheets.forEach((sheet) => {
+      const sheetName = sheet.getName()
+      if (!regrex_channel.test(sheetName) && !regrex_log.test(sheetName) && !(sheetName === "info_rawData")) return
+      const lastRow = sheet.getLastRow()
+      if (lastRow === 1) return
+      if (regrex_channel.test(sheetName)) {
+        sheet.getRange(1, 1, sheet.lastRow(), 11).setBackground("#ffffff")
+      }
+      sheet.insertRowsAfter(lastRow, 3)
+      sheet.deleteRows(2, lastRow - 1)
+      console.log(`deleted: ${sheetName}`)
+    })
   } catch (error) {
     const message = `slackログのバックアップの保存に失敗しました。\n\nエラーメッセージ: ${error.message}`
     postMessage(SLACK_CHANNEL_LOG, message)
